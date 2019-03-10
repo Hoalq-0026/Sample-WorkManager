@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.work.Data
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.quanghoa.apps.photouploader.ImageUtils
 
 private const val LOG_TAG = "FilterWorker"
@@ -15,7 +16,7 @@ const val KEY_IMAGE_INDEX = "IMAGE_INDEX"
 
 private const val IMAGE_PATH_PREFIX = "IMAGE_PATH_"
 
-class FilterWroker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
+class FilterWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     override fun doWork(): Result = try {
 
@@ -31,9 +32,10 @@ class FilterWroker(ctx: Context, params: WorkerParameters) : Worker(ctx, params)
         val filteredBitmap = ImageUtils.applySepiaFilter(bitmap)
         val filteredImageUri = ImageUtils.writeBitmapToFile(applicationContext, filteredBitmap)
 
-//        outputData = Data.Builder().putString(IMAGE_PATH_PREFIX + imageIndex, filteredImageUri.toString()).build()
+        val outputData = workDataOf(IMAGE_PATH_PREFIX + imageIndex to filteredImageUri.toString())
+
         Log.d(LOG_TAG, "Success")
-        Result.success()
+        Result.success(outputData)
 
     } catch (e: Throwable) {
         Log.e(LOG_TAG, "Error executing work: " + e.message, e)

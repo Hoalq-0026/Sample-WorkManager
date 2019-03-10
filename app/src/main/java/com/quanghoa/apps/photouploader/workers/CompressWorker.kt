@@ -22,14 +22,14 @@ class CompressWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, param
             .filter { it.key.startsWith(KEY_IMAGE_PATH) }
             .map { it.value as String }
 
-        val zipFile = ImageUtils.createZipFile(applicationContext, imagePaths.toTypedArray())
+        val zipFileUri = ImageUtils.createZipFile(applicationContext, imagePaths.toTypedArray())
 
-        /*      outputData = Data.Builder()
-                  .putString(KEY_ZIP_PATH, zipFile.path)
-                  .build()*/
+        val    outputData = Data.Builder()
+                  .putString(KEY_ZIP_PATH, zipFileUri.path)
+                  .build()
 
         Log.d(LOG_TAG, "Success!")
-        Result.success()
+        Result.success(outputData)
 
     } catch (e: Throwable) {
         Log.e(LOG_TAG, "Error executing work ${e.message}", e)
